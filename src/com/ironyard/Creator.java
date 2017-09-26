@@ -32,6 +32,7 @@ public class Creator {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+        createWorkOrders();
     }
 
     public static void main(String args[]) throws JsonProcessingException {
