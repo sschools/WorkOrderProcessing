@@ -41,4 +41,14 @@ public class WorkOrder {
     public void setStatus(Status status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "WorkOrder{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                ", senderName='" + senderName + '\'' +
+                ", status=" + status +
+                '}';
+    }
 }

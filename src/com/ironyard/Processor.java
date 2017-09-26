@@ -33,10 +33,14 @@ public class Processor {
 
     private void moveIt() {
         // move work orders in map from one state to another
+        System.out.println("The Map: " + orderMap);
+        for (Status item : orderMap.keySet()) {
+
+        }
+
     }
 
     private void readIt() {
-        // read the json files into WorkOrders and put in map
         File currentDirectory = new File(".");
         File files[] = currentDirectory.listFiles();
         Set<WorkOrder> orderSet = new HashSet<>();
@@ -53,8 +57,6 @@ public class Processor {
                     System.out.println("Could not find file *" + f + "*");
                     ex.printStackTrace();
                 }
-                System.out.println("File contents: " + fileContents);
-
                 f.delete();
             }
         }
@@ -62,6 +64,7 @@ public class Processor {
         for (int i = 0; i < orders.length; i++) {
             try {
                 WorkOrder readOrder = mapper.readValue(orders[i], WorkOrder.class);
+                System.out.println("New Work Order Found: " + readOrder.toString());
                 orderSet.add(readOrder);
                 orderMap.put(Status.INITIAL, (HashSet) orderSet);
             } catch (IOException ex) {
