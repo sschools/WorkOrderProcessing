@@ -16,7 +16,6 @@ import java.io.File;
 public class Processor {
 
     public Map<Status, HashSet> orderMap = new HashMap<>();
-    public Set<WorkOrder> orderSet = new HashSet<>();
 
     public ObjectMapper mapper = new ObjectMapper();
 
@@ -35,11 +34,16 @@ public class Processor {
         // move work orders in map from one state to another
         System.out.println("The Map: " + orderMap);
         Set<WorkOrder> tempSet = orderMap.get(Status.IN_PROGRESS);
+        Set<WorkOrder> alreadyDone = new HashSet<>();
         if (tempSet != null) {
+            if (orderMap.get(Status.DONE) != null) {
+                alreadyDone = orderMap.get(Status.DONE);
+            }
             for (WorkOrder item : tempSet) {
                 item.setStatus(Status.DONE);
+                alreadyDone.add(item);
             }
-            orderMap.put(Status.DONE, (HashSet) tempSet);
+            orderMap.put(Status.DONE, (HashSet) alreadyDone);
             orderMap.remove(Status.IN_PROGRESS, tempSet);
         }
         Set<WorkOrder> tempSet2 = orderMap.get(Status.ASSIGNED);
@@ -64,6 +68,7 @@ public class Processor {
         File currentDirectory = new File(".");
         File files[] = currentDirectory.listFiles();
         List<String> fileContents = new ArrayList<>();
+        Set<WorkOrder> orderSet = new HashSet<>();
         for (File f : files) {
             if (f.getName().endsWith(".json")) {
                 try {
