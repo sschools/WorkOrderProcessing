@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 
 public class Processor {
 
     public Map<Status, HashSet> orderMap = new HashMap<>();
+    public Set<WorkOrder> orderSet = new HashSet<>();
 
     public ObjectMapper mapper = new ObjectMapper();
 
@@ -34,16 +34,35 @@ public class Processor {
     private void moveIt() {
         // move work orders in map from one state to another
         System.out.println("The Map: " + orderMap);
-        for (Status item : orderMap.keySet()) {
-
+        Set<WorkOrder> tempSet = orderMap.get(Status.IN_PROGRESS);
+        if (tempSet != null) {
+            for (WorkOrder item : tempSet) {
+                item.setStatus(Status.DONE);
+            }
+            orderMap.put(Status.DONE, (HashSet) tempSet);
+            orderMap.remove(Status.IN_PROGRESS, tempSet);
         }
-
+        Set<WorkOrder> tempSet2 = orderMap.get(Status.ASSIGNED);
+        if (tempSet2 != null) {
+            for (WorkOrder item : tempSet2) {
+                item.setStatus(Status.IN_PROGRESS);
+            }
+            orderMap.put(Status.IN_PROGRESS, (HashSet) tempSet2);
+            orderMap.remove(Status.ASSIGNED, tempSet2);
+        }
+        Set<WorkOrder> tempSet3 = orderMap.get(Status.INITIAL);
+        if (tempSet3 != null) {
+            for (WorkOrder item : tempSet3) {
+                item.setStatus(Status.ASSIGNED);
+            }
+            orderMap.put(Status.ASSIGNED, (HashSet) tempSet3);
+            orderMap.remove(Status.INITIAL, tempSet3);
+        }
     }
 
     private void readIt() {
         File currentDirectory = new File(".");
         File files[] = currentDirectory.listFiles();
-        Set<WorkOrder> orderSet = new HashSet<>();
         List<String> fileContents = new ArrayList<>();
         for (File f : files) {
             if (f.getName().endsWith(".json")) {
